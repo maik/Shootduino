@@ -8,13 +8,25 @@ const uint8_t TOP_BUTTON = 4;
 const uint8_t RIGHT_BUTTON = 3;
 const uint8_t BOTTOM_BUTTON = 5;
 
-extern int resting_pos_x;
-extern int resting_pos_y;
-extern boolean left, right, up, down;
-extern boolean joy_button, top_button, bottom_button, left_button, right_button;
+struct JoystickState {
+  bool left : 1;
+  bool right : 1;
+  bool up : 1;
+  bool down : 1;
+  bool joy_button : 1;
+  bool top_button : 1;
+  bool bottom_button : 1;
+  bool left_button : 1;
+  bool right_button : 1;
+};
+
+extern JoystickState joystick;
+
+static uint16_t resting_pos_x;
+static uint16_t resting_pos_y;
 
 void init_joystick_shield();
 void update_control();
-void init_joystick_shield_button(const uint8_t pin);
+static void init_joystick_shield_button(const uint8_t pin);
 #endif
 

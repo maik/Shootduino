@@ -201,25 +201,25 @@ void start_asteroid() {
 }
 
 void move_player() {
-  if (left) {
+  if (joystick.left) {
     player.x -= player.vx;
     if (player.x < 0) {
       player.x = 0;
     }
   }
-  if (right) {
+  if (joystick.right) {
     player.x += player.vx;
     if (player.x + PLAYER_W > display.width()) {
       player.x = display.width() - PLAYER_W;
     }
   }
-  if (up) {
+  if (joystick.up) {
     player.y -= player.vy;
     if (player.y < 0) {
       player.y = 0;
     }
   }
-  if (down) {
+  if (joystick.down) {
     player.y += player.vy;
     if (player.y + PLAYER_W > display.height()) {
       player.y = display.height() - PLAYER_H;
@@ -351,9 +351,9 @@ void pause_game() {
   display.print(lives);
   display.setCursor(42, 56);
   display.print(score);
-  if (bottom_button && (ticks - state_changed > MIN_DELAY)) {
+  if (joystick.bottom_button && (ticks - state_changed > MIN_DELAY)) {
     change_state(RUNNING);
-    bottom_button = false;
+    joystick.bottom_button = false;
     delay(200);
   }
 }
@@ -367,13 +367,13 @@ void lost_live() {
   pmem_print_center(5, 2, PSTR("Don't"));
   pmem_print_center(25, 2, PSTR("Give"));
   pmem_print_center(45, 2, PSTR("Up!"));
-  if (right_button && (ticks - state_changed > MIN_DELAY)) {
+  if (joystick.right_button && (ticks - state_changed > MIN_DELAY)) {
     change_state(RUNNING);
     player.vx = player.vy = 2;
     player.type = PLAYER;
     player.is_active = true;
     player.anim_frame = 0;
-    right_button = false;
+    joystick.right_button = false;
     delay(200);
   }
 }
@@ -404,19 +404,19 @@ void game_over() {
   
   print_score(56);
   
-  if (right_button && (ticks - state_changed > MIN_DELAY)) {
+  if (joystick.right_button && (ticks - state_changed > MIN_DELAY)) {
     if (get_highscore_index(score) != -1) {
       change_state(ENTER_HS);
     } else {
       change_state(INTRO);
     }
-    right_button = false;
+    joystick.right_button = false;
     delay(200);
   }
 }
 
 void update_game() {
-  if (bottom_button) {
+  if (joystick.bottom_button) {
     change_state(PAUSED);
     return;
   }
@@ -433,7 +433,7 @@ void update_game() {
       change_state(DONE);
       return;
   }
-  if (right_button) {
+  if (joystick.right_button) {
     fire_bullet();
   }
   if (ticks - asteroid_started > ASTEROID_DELAY) {
@@ -461,9 +461,9 @@ void intro() {
     change_state(SHOW_HS);
   }
   
-  if (right_button) {
+  if (joystick.right_button) {
     change_state(RUNNING);
-    right_button = false;
+    joystick.right_button = false;
     delay(200);
   }
 }
@@ -483,10 +483,10 @@ void show_highscores() {
   if (ticks - state_changed > 7000) {
     change_state(INTRO);
   }
-  
-  if (right_button) {
+
+  if (joystick.right_button) {
     change_state(INTRO);
-    right_button = false;
+    joystick.right_button = false;
     delay(200);
   }
 }
@@ -513,14 +513,14 @@ void init_highscore_entry(uint16_t score) {
 void handle_highscore_controls() {
   if (ticks - initials_control_hit >= HS_CONTROL_DELAY) {
     initials_control_hit = ticks;
-    if (bottom_button) {
+    if (joystick.bottom_button) {
       initials_index++;
       initials_index %= LEN_INITIALS;
-    } else if (up) {
+    } else if (joystick.up) {
       letter_index[initials_index]++;
       if (letter_index[initials_index] >= strlen_P(initials_letters) - 1)
         letter_index[initials_index] = 0;
-    } else if (down) {
+    } else if (joystick.down) {
       if (letter_index[initials_index] == 0)
         letter_index[initials_index] = strlen_P(initials_letters) - 1;
       else
@@ -554,11 +554,11 @@ void enter_highscore() {
   copy_initials_letters();
   show_highscore_display();
   
-  if (right_button) {
+  if (joystick.right_button) {
     insert_entry(highscore_entry);
     init_game();
     change_state(INTRO);
-    right_button = false;
+    joystick.right_button = false;
     delay(200);
   }
 }

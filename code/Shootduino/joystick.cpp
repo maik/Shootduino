@@ -1,9 +1,6 @@
 #include "joystick.h"
 
-int resting_pos_x;
-int resting_pos_y;
-boolean left, right, up, down;
-boolean joy_button, top_button, bottom_button, left_button, right_button;
+JoystickState joystick;
 
 void init_joystick_shield() {
   init_joystick_shield_button(JOY_BUTTON);
@@ -17,22 +14,22 @@ void init_joystick_shield() {
   }
 }
 
-void init_joystick_shield_button(const uint8_t pin) {
-  pinMode(pin, INPUT);
-  digitalWrite(pin, HIGH);
+void update_control() {
+  uint16_t x = analogRead(A0);
+  uint16_t y = analogRead(A1);
+  joystick.left = x < resting_pos_x - 1;
+  joystick.right = x > resting_pos_x + 1;
+  joystick.up = y > resting_pos_y + 1;
+  joystick.down = y < resting_pos_y - 1;
+  joystick.joy_button = digitalRead(JOY_BUTTON) == 0;
+  joystick.top_button = digitalRead(TOP_BUTTON) == 0;
+  joystick.bottom_button = digitalRead(BOTTOM_BUTTON) == 0;
+  joystick.left_button = digitalRead(LEFT_BUTTON) == 0;
+  joystick.right_button = digitalRead(RIGHT_BUTTON) == 0;
 }
 
-void update_control() {
-  int x = analogRead(A0);
-  int y = analogRead(A1);
-  left = x < resting_pos_x - 1;
-  right = x > resting_pos_x + 1;
-  up = y > resting_pos_y + 1;
-  down = y < resting_pos_y - 1;
-  joy_button = digitalRead(JOY_BUTTON) == 0;
-  top_button = digitalRead(TOP_BUTTON) == 0;
-  bottom_button = digitalRead(BOTTOM_BUTTON) == 0;
-  left_button = digitalRead(LEFT_BUTTON) == 0;
-  right_button = digitalRead(RIGHT_BUTTON) == 0;
+static void init_joystick_shield_button(const uint8_t pin) {
+  pinMode(pin, INPUT);
+  digitalWrite(pin, HIGH);
 }
 
