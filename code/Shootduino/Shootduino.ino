@@ -24,7 +24,7 @@ const uint16_t HS_CONTROL_DELAY = 70;
 const uint8_t MAX_SCORE_LEN = 7;
 const uint8_t LEN_HIGHSCORE_ENTRY = 9;
 
-enum ObjectType {
+enum GameObjectType {
   PLAYER, ASTEROID, BULLET, EXPLOSION
 };
 
@@ -37,7 +37,7 @@ struct GameObject {
   int16_t x;
   int8_t y, vx, vy;
   boolean is_active;
-  ObjectType type;
+  GameObjectType type;
   uint8_t anim_frame;
   uint8_t frame_count;
 };
