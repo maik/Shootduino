@@ -8,14 +8,13 @@
 #include "highscores.h"
 #include "textutils.h"
 #include "starfield.h"
+#include "game_objects.h"
+#include "game_state.h"
 
 const uint8_t I2C_ADDRESS_DISPLAY = 0x3C;
 const uint8_t OLED_RESET = 4;
 
 const uint8_t MAX_LIVES = 3;
-const uint8_t MAX_ASTEROIDS = 8;
-const uint8_t MAX_BULLETS = 3;
-const uint8_t MAX_MISSES = 5;
 
 const uint16_t ASTEROID_DELAY = 800;
 const uint16_t BULLET_DELAY = 600;
@@ -25,117 +24,22 @@ const uint16_t HS_CONTROL_DELAY = 70;
 const uint8_t MAX_SCORE_LEN = 7;
 const uint8_t LEN_HIGHSCORE_ENTRY = 9;
 
-enum GameObjectType {
-  PLAYER, ASTEROID, BULLET, EXPLOSION
-};
+GameState state;
 
-enum GameState {
-  INTRO, RUNNING, PAUSED, LOST_LIVE, DONE,
-  ENTER_HS, SHOW_HS
-};
-
-struct GameObject {
-  int16_t x;
-  int8_t y, vx, vy;
-  boolean is_active;
-  GameObjectType type;
-  uint8_t anim_frame;
-  uint8_t frame_count;
-};
-
-GameObject bullets[MAX_BULLETS];
-GameObject asteroids[MAX_ASTEROIDS];
-GameObject player;
-
-void init_objects(GameObject* objects, uint8_t max_objects);
-void draw_objects(GameObject* objects, uint8_t max_objects);
-void move_objects(GameObject* objects, uint8_t max_objects);
-void change_state(GameState new_state);
-
-uint32_t ticks = 0;  
+uint32_t ticks = 0;
 uint32_t bullet_fired = 0; // Timestamp of the last bullet fired by player.
 uint32_t asteroid_started = 0; // Timestamp of the last asteroid.
 uint32_t initials_control_hit = 0;
+uint32_t state_changed = 0;
 
 Adafruit_SSD1306 display(OLED_RESET);
 boolean player_hit = false;
-GameState state;
 HighScoreEntry highscore_entry;
 uint8_t lives = MAX_LIVES;
 uint16_t score = 0;
 uint8_t asteroids_missed = 0;
-uint32_t state_changed = 0;
 uint8_t letter_index[LEN_INITIALS] = { 0 };
 uint8_t initials_index = 0;
-
-void change_state(GameState new_state) {
-  state = new_state;
-  state_changed = ticks;
-}
-
-void init_objects(GameObject* objects, uint8_t max_objects) {
-  for (uint8_t i = 0; i < max_objects; i++) {
-    objects[i].is_active = false;
-  }
-}
-
-void draw_objects(GameObject* objects, uint8_t max_objects) {
-  const uint8_t* bmp = NULL;
-  for (uint8_t i = 0; i < max_objects; i++) {
-    if (objects[i].is_active) {
-      switch (objects[i].type) {
-        case ASTEROID:
-          bmp = asteroid_anim + (2 * ASTEROID_H) * objects[i].anim_frame;
-          display.drawBitmap(asteroids[i].x, asteroids[i].y, bmp, ASTEROID_W, ASTEROID_H, WHITE);
-          if (state == RUNNING)
-            objects[i].frame_count++;
-          if (objects[i].frame_count == ANIM_FRAME_DELAY)
-          {
-            objects[i].anim_frame++;
-            objects[i].anim_frame %= NUM_ASTEROID_FRAMES;
-            objects[i].frame_count = 0;            
-          }
-          break;
-        case EXPLOSION:
-          bmp = explosion_anim + (2 * EXPLOSION_H) * objects[i].anim_frame;
-          display.drawBitmap(asteroids[i].x, asteroids[i].y, bmp, EXPLOSION_W, EXPLOSION_H, WHITE);
-          objects[i].frame_count++;
-          if (objects[i].frame_count == ANIM_FRAME_DELAY)
-          {
-            objects[i].frame_count = 0;            
-            objects[i].anim_frame++;
-            if (objects[i].anim_frame == NUM_EXPLOSION_FRAMES)
-              objects[i].is_active = false;
-          }
-          break;
-        case BULLET:
-          display.drawFastHLine(objects[i].x, objects[i].y, BULLET_W, WHITE);
-          break;
-      }
-    }
-  }
-}
-
-void move_objects(GameObject* objects, uint8_t max_objects) {
-  for (uint8_t i = 0; i < max_objects; i++) {
-    if (objects[i].is_active) {
-      objects[i].x += objects[i].vx;      
-      switch (objects[i].type) {
-        case ASTEROID:
-          if (objects[i].x + (int)ASTEROID_W <= 0) {
-            objects[i].is_active = false;
-            asteroids_missed++;
-          }          
-          break;
-        case BULLET:
-          if (objects[i].x >= display.width()) {
-            objects[i].is_active = false;
-          }
-          break;
-      }
-    }
-  }
-}
 
 void fire_bullet() {
   if (ticks - bullet_fired < BULLET_DELAY) {
