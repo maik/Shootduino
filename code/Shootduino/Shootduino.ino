@@ -262,7 +262,7 @@ void game_over() {
     if (get_highscore_index(score) != -1) {
       change_state(ENTER_HS);
     } else {
-      change_state(INTRO);
+      init_game();
     }
     joystick.right_button = false;
     delay(200);
