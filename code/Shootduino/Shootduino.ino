@@ -7,6 +7,7 @@
 #include "joystick.h"
 #include "highscores.h"
 #include "textutils.h"
+#include "starfield.h"
 
 const uint8_t I2C_ADDRESS_DISPLAY = 0x3C;
 const uint8_t OLED_RESET = 4;
@@ -45,14 +46,6 @@ struct GameObject {
 GameObject bullets[MAX_BULLETS];
 GameObject asteroids[MAX_ASTEROIDS];
 GameObject player;
-
-const uint8_t MAX_STARS = 10;
-
-struct Star {
-  int8_t x, y, vx;
-};
-
-Star starfield[MAX_STARS];
 
 void init_objects(GameObject* objects, uint8_t max_objects);
 void draw_objects(GameObject* objects, uint8_t max_objects);
@@ -260,31 +253,6 @@ void check_collisions() {
         break;
       }
     }
-  }
-}
-
-void init_starfield() {
-  for (uint8_t i = 0; i < MAX_STARS; i++) {
-    starfield[i].x = random(display.width());
-    starfield[i].y = random(display.height());
-    starfield[i].vx = random(3) + 1;
-  }
-}
-
-void move_stars() {
-  for (uint8_t i = 0; i < MAX_STARS; i++) {
-    starfield[i].x -= starfield[i].vx;
-    if (starfield[i].x < 0) {
-      starfield[i].x = display.width();
-      starfield[i].y = random(display.height());
-      starfield[i].vx = random(3) + 1;
-    }
-  }
-}
-
-void draw_stars() {
-  for (uint8_t i = 0; i < MAX_STARS; i++) {
-    display.drawPixel(starfield[i].x, starfield[i].y, WHITE);
   }
 }
 
