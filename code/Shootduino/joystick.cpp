@@ -19,8 +19,8 @@ void update_control() {
   uint16_t y = analogRead(A1);
   joystick.left = x < resting_pos_x - 1;
   joystick.right = x > resting_pos_x + 1;
-  joystick.up = y > resting_pos_y + 1;
-  joystick.down = y < resting_pos_y - 1;
+  joystick.up = y < resting_pos_y - 1;
+  joystick.down = y > resting_pos_y + 1;
   joystick.joy_button = digitalRead(JOY_BUTTON) == 0;
   joystick.top_button = digitalRead(TOP_BUTTON) == 0;
   joystick.bottom_button = digitalRead(BOTTOM_BUTTON) == 0;

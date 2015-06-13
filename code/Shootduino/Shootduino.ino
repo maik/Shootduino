@@ -6,6 +6,7 @@
 #include "gfx.h"
 #include "joystick.h"
 #include "highscores.h"
+#include "textutils.h"
 
 const uint8_t I2C_ADDRESS_DISPLAY = 0x3C;
 const uint8_t OLED_RESET = 4;
@@ -13,7 +14,6 @@ const uint8_t OLED_RESET = 4;
 const uint8_t MAX_LIVES = 3;
 const uint8_t MAX_ASTEROIDS = 8;
 const uint8_t MAX_BULLETS = 3;
-const uint8_t MAX_STARS = 10;
 const uint8_t MAX_MISSES = 5;
 
 const uint16_t ASTEROID_DELAY = 800;
@@ -46,6 +46,8 @@ GameObject bullets[MAX_BULLETS];
 GameObject asteroids[MAX_ASTEROIDS];
 GameObject player;
 
+const uint8_t MAX_STARS = 10;
+
 struct Star {
   int8_t x, y, vx;
 };
@@ -76,26 +78,6 @@ uint8_t initials_index = 0;
 void change_state(GameState new_state) {
   state = new_state;
   state_changed = ticks;
-}
-
-uint8_t center_pos(const char* str, const uint8_t text_size) {
-  return (display.width() - (strlen_P(str) * text_size * BASE_FONT_W)) / 2;
-}
-
-void pmem_print(uint8_t x, uint8_t y, uint8_t size, const char* str, uint16_t color = WHITE) {
-  uint8_t font_width = size * BASE_FONT_W;
-  char c;
-  uint8_t i = 0;
-  display.setTextSize(size);
-  display.setTextColor(color);
-  while (c = pgm_read_byte(str++)) {
-    display.setCursor(x + i++ * font_width, y);
-    display.print(c);
-  }
-}
-
-void pmem_print_center(uint8_t y, uint8_t size, const char* str, uint16_t color = WHITE) {
-  pmem_print(center_pos(str, size), y, size, str, color);
 }
 
 void init_objects(GameObject* objects, uint8_t max_objects) {

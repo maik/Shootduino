@@ -17,7 +17,6 @@ extern const uint8_t explosion_anim[];
 const uint8_t BULLET_W = 5;
 const uint8_t BULLET_H = 1;
 
-const uint8_t BASE_FONT_W = 6;
 const uint8_t ANIM_FRAME_DELAY = 4;
 #endif
 
