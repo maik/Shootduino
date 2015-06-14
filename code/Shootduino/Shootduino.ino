@@ -92,8 +92,7 @@ void draw_player() {
     const uint8_t* bmp = explosion_anim + (2 * EXPLOSION_H) * player.anim_frame;
     display.drawBitmap(player.x, player.y, bmp, EXPLOSION_W, EXPLOSION_H, WHITE);
     player.frame_count++;
-    if (player.frame_count == ANIM_FRAME_DELAY)
-    {
+    if (player.frame_count == ANIM_FRAME_DELAY) {
       player.frame_count = 0;            
       player.anim_frame++;
       if (player.anim_frame == NUM_EXPLOSION_FRAMES)
@@ -324,15 +323,19 @@ void enter_highscore() {
   }
 }
 
+void init_display() {
+  display.begin(SSD1306_SWITCHCAPVCC, I2C_ADDRESS_DISPLAY);
+  display.display();
+  delay(1000);
+  display.clearDisplay();
+}
+
 void setup() {
   randomSeed(analogRead(A0));
   init_joystick_shield();
   init_highscores();
   init_game();
-  display.begin(SSD1306_SWITCHCAPVCC, I2C_ADDRESS_DISPLAY);
-  display.display();
-  delay(1000);
-  display.clearDisplay();
+  init_display();
 }
 
 void loop() {

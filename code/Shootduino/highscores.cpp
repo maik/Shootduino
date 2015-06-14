@@ -4,7 +4,7 @@
 #include "textutils.h"
 #include "game.h"
 
-const char initials_letters[] PROGMEM = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,-?!";
+const char INITIALS_LETTERS[] PROGMEM = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,-?!";
 
 extern Adafruit_SSD1306 display;
 extern JoystickState joystick;
@@ -102,11 +102,11 @@ void handle_highscore_controls() {
       initials_index %= LEN_INITIALS;
     } else if (joystick.up) {
       letter_index[initials_index]++;
-      if (letter_index[initials_index] >= strlen_P(initials_letters) - 1)
+      if (letter_index[initials_index] >= strlen_P(INITIALS_LETTERS) - 1)
         letter_index[initials_index] = 0;
     } else if (joystick.down) {
       if (letter_index[initials_index] == 0)
-        letter_index[initials_index] = strlen_P(initials_letters) - 1;
+        letter_index[initials_index] = strlen_P(INITIALS_LETTERS) - 1;
       else
         letter_index[initials_index]--;
     }
@@ -115,7 +115,7 @@ void handle_highscore_controls() {
 
 void copy_initials_letters() {
   for (uint8_t i = 0; i < LEN_INITIALS; i++) {
-    shootduino.highscore_entry.initials[i] = pgm_read_byte(initials_letters + letter_index[i]);
+    shootduino.highscore_entry.initials[i] = pgm_read_byte(INITIALS_LETTERS + letter_index[i]);
   }
   shootduino.highscore_entry.score = shootduino.score;  
 }
