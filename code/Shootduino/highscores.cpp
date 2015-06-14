@@ -97,7 +97,7 @@ void init_highscore_entry(uint16_t score) {
 void handle_highscore_controls() {
   if (shootduino.ticks - initials_control_hit >= HS_CONTROL_DELAY) {
     initials_control_hit = shootduino.ticks;
-    if (joystick.bottom_button) {
+    if (joystick.left_button) {
       initials_index++;
       initials_index %= LEN_INITIALS;
     } else if (joystick.up) {

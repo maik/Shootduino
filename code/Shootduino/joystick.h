@@ -3,10 +3,10 @@
 #include <Arduino.h>
 
 const uint8_t JOY_BUTTON = 2;
-const uint8_t LEFT_BUTTON = 6;
-const uint8_t TOP_BUTTON = 4;
 const uint8_t RIGHT_BUTTON = 3;
+const uint8_t TOP_BUTTON = 4;
 const uint8_t BOTTOM_BUTTON = 5;
+const uint8_t LEFT_BUTTON = 6;
 
 struct JoystickState {
   bool left : 1;

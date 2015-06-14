@@ -167,9 +167,9 @@ void pause_game() {
   display.print(shootduino.lives);
   display.setCursor(42, 56);
   display.print(shootduino.score);
-  if (joystick.bottom_button && (shootduino.ticks - shootduino.state_changed > MIN_DELAY)) {
+  if (joystick.left_button && (shootduino.ticks - shootduino.state_changed > MIN_DELAY)) {
     change_state(RUNNING);
-    joystick.bottom_button = false;
+    joystick.left_button = false;
     delay(200);
   }
 }
@@ -232,7 +232,7 @@ void game_over() {
 }
 
 void update_game() {
-  if (joystick.bottom_button) {
+  if (joystick.left_button) {
     change_state(PAUSED);
     return;
   }
