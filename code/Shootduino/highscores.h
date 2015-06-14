@@ -1,6 +1,5 @@
 #ifndef __HIGHSCORES__
 #define __HIGHSCORES__
-#include <Arduino.h>
 #include <EEPROM.h>
 
 extern const char initials_letters[] PROGMEM;

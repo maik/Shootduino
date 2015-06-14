@@ -1,6 +1,5 @@
 #ifndef __GAME_OBJECTS_H_
 #define __GAME_OBJECTS_H_
-
 #include <Arduino.h>
 
 const uint8_t MAX_ASTEROIDS = 8;
