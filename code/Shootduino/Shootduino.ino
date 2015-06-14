@@ -17,7 +17,6 @@ const uint8_t OLED_RESET = 4;
 
 Adafruit_SSD1306 display(OLED_RESET);
 Game shootduino;
-HighScoreEntry highscore_entry;
 
 void fire_bullet() {
   if (shootduino.ticks - shootduino.bullet_fired < BULLET_DELAY) {
@@ -328,7 +327,7 @@ void enter_highscore() {
   show_highscore_display();
   
   if (joystick.right_button) {
-    insert_entry(highscore_entry);
+    insert_entry(shootduino.highscore_entry);
     init_game();
     change_state(INTRO);
     joystick.right_button = false;

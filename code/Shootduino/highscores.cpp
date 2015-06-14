@@ -85,9 +85,9 @@ void show_highscore_entry(uint8_t y, HighScoreEntry entry) {
 }
 
 void init_highscore_entry(uint16_t score) {
-  highscore_entry.score = score;
+  shootduino.highscore_entry.score = score;
   for (uint8_t i = 0; i < LEN_INITIALS; i++) {
-    highscore_entry.initials[i] = 'A';
+    shootduino.highscore_entry.initials[i] = 'A';
   }
   for (uint8_t i = 0; i < LEN_INITIALS; i++)
     letter_index[i] = 0;
@@ -115,9 +115,9 @@ void handle_highscore_controls() {
 
 void copy_initials_letters() {
   for (uint8_t i = 0; i < LEN_INITIALS; i++) {
-    highscore_entry.initials[i] = pgm_read_byte(initials_letters + letter_index[i]);
+    shootduino.highscore_entry.initials[i] = pgm_read_byte(initials_letters + letter_index[i]);
   }
-  highscore_entry.score = shootduino.score;  
+  shootduino.highscore_entry.score = shootduino.score;  
 }
 
 uint8_t score_entry_xpos() {
@@ -126,7 +126,7 @@ uint8_t score_entry_xpos() {
 
 void show_highscore_display() {
   pmem_print_center(10, 1, PSTR("Enter Initials"));
-  show_highscore_entry(30, highscore_entry);
+  show_highscore_entry(30, shootduino.highscore_entry);
   display.setCursor(score_entry_xpos() + initials_index * BASE_FONT_W, 36);
   display.write(24); // Shows an arrow  
 }
