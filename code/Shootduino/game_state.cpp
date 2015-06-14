@@ -1,12 +1,11 @@
 #include <Arduino.h>
 #include "game_state.h"
+#include "game.h"
 
-extern uint32_t ticks;
-extern uint32_t state_changed;
-extern GameState state;
+extern Game shootduino;
 
 void change_state(GameState new_state) {
-  state = new_state;
-  state_changed = ticks;
+  shootduino.state = new_state;
+  shootduino.state_changed = shootduino.ticks;
 }
 

@@ -2,10 +2,10 @@
 #include "game_objects.h"
 #include "game_state.h"
 #include "gfx.h"
+#include "game.h"
 
 extern Adafruit_SSD1306 display;
-extern GameState state;
-extern uint8_t asteroids_missed;
+extern Game shootduino;
 
 GameObject bullets[MAX_BULLETS];
 GameObject asteroids[MAX_ASTEROIDS];
@@ -25,7 +25,7 @@ void draw_objects(GameObject* objects, uint8_t max_objects) {
         case ASTEROID:
           bmp = asteroid_anim + (2 * ASTEROID_H) * objects[i].anim_frame;
           display.drawBitmap(asteroids[i].x, asteroids[i].y, bmp, ASTEROID_W, ASTEROID_H, WHITE);
-          if (state == RUNNING)
+          if (shootduino.state == RUNNING)
             objects[i].frame_count++;
           if (objects[i].frame_count == ANIM_FRAME_DELAY)
           {
@@ -62,7 +62,7 @@ void move_objects(GameObject* objects, uint8_t max_objects) {
         case ASTEROID:
           if (objects[i].x + (int)ASTEROID_W <= 0) {
             objects[i].is_active = false;
-            asteroids_missed++;
+            shootduino.asteroids_missed++;
           }          
           break;
         case BULLET:

@@ -10,35 +10,20 @@
 #include "starfield.h"
 #include "game_objects.h"
 #include "game_state.h"
+#include "game.h"
 
 const uint8_t I2C_ADDRESS_DISPLAY = 0x3C;
 const uint8_t OLED_RESET = 4;
-const uint8_t MAX_LIVES = 3;
-const uint16_t ASTEROID_DELAY = 800;
-const uint16_t BULLET_DELAY = 600;
-const uint16_t MIN_DELAY = 300;
-const uint8_t MAX_SCORE_LEN = 7;
-
-GameState state;
-
-uint32_t ticks = 0;
-uint32_t bullet_fired = 0; // Timestamp of the last bullet fired by player.
-uint32_t asteroid_started = 0; // Timestamp of the last asteroid.
-uint32_t state_changed = 0;
 
 Adafruit_SSD1306 display(OLED_RESET);
+Game shootduino;
 HighScoreEntry highscore_entry;
 
-boolean player_hit = false;
-uint8_t lives = MAX_LIVES;
-uint16_t score = 0;
-uint8_t asteroids_missed = 0;
-
 void fire_bullet() {
-  if (ticks - bullet_fired < BULLET_DELAY) {
+  if (shootduino.ticks - shootduino.bullet_fired < BULLET_DELAY) {
     return;
   }
-  bullet_fired = ticks;
+  shootduino.bullet_fired = shootduino.ticks;
   
   for (uint8_t i = 0; i < MAX_BULLETS; i++) {
     if (!bullets[i].is_active) {
@@ -53,10 +38,10 @@ void fire_bullet() {
 }
 
 void start_asteroid() {
-  if (ticks - asteroid_started < ASTEROID_DELAY) {
+  if (shootduino.ticks - shootduino.asteroid_started < ASTEROID_DELAY) {
     return;
   }
-  asteroid_started = ticks;
+  shootduino.asteroid_started = shootduino.ticks;
   
   for (uint8_t i = 0; i < MAX_ASTEROIDS; i++) {
     if (!asteroids[i].is_active) {
@@ -129,7 +114,7 @@ void check_collisions() {
             asteroids[j].type = EXPLOSION;
             asteroids[j].vx = 0;
             bullets[i].is_active = false;
-            score += 100;
+            shootduino.score += 100;
             break;
           }
         }        
@@ -142,7 +127,7 @@ void check_collisions() {
       if (player.x < asteroids[i].x + ASTEROID_W && player.x + PLAYER_W > asteroids[i].x &&
           player.y < asteroids[i].y + ASTEROID_H && player.y + PLAYER_H > asteroids[i].y)
       {
-        player_hit = true;
+        shootduino.player_hit = true;
         player.type = EXPLOSION;
         player.vx = player.vy = 0;
         asteroids[i].type = EXPLOSION;
@@ -158,23 +143,23 @@ void init_game() {
   init_objects(bullets, MAX_BULLETS);
   init_objects(asteroids, MAX_ASTEROIDS);
   change_state(INTRO);
-  player_hit = false;
+  shootduino.player_hit = false;
   player.x = 0;
   player.y = display.height() / 2;
   player.vx = player.vy = 2;
   player.type = PLAYER;
   player.is_active = true;
   player.anim_frame = 0;
-  lives = MAX_LIVES;
-  score = 0;
-  asteroids_missed = 0;
+  shootduino.lives = MAX_LIVES;
+  shootduino.score = 0;
+  shootduino.asteroids_missed = 0;
   init_highscore_entry(0);
 }
 
 void setup() {
+  randomSeed(analogRead(A0));
   init_joystick_shield();
   init_highscores();
-  randomSeed(analogRead(A0));
   init_game();
   display.begin(SSD1306_SWITCHCAPVCC, I2C_ADDRESS_DISPLAY);
   display.display();
@@ -192,10 +177,10 @@ void pause_game() {
   pmem_print(0, 48, 1, PSTR("Lives: "));
   pmem_print(0, 56, 1, PSTR("Score: "));
   display.setCursor(42, 48);
-  display.print(lives);
+  display.print(shootduino.lives);
   display.setCursor(42, 56);
-  display.print(score);
-  if (joystick.bottom_button && (ticks - state_changed > MIN_DELAY)) {
+  display.print(shootduino.score);
+  if (joystick.bottom_button && (shootduino.ticks - shootduino.state_changed > MIN_DELAY)) {
     change_state(RUNNING);
     joystick.bottom_button = false;
     delay(200);
@@ -211,7 +196,7 @@ void lost_live() {
   pmem_print_center(5, 2, PSTR("Don't"));
   pmem_print_center(25, 2, PSTR("Give"));
   pmem_print_center(45, 2, PSTR("Up!"));
-  if (joystick.right_button && (ticks - state_changed > MIN_DELAY)) {
+  if (joystick.right_button && (shootduino.ticks - shootduino.state_changed > MIN_DELAY)) {
     change_state(RUNNING);
     player.vx = player.vy = 2;
     player.type = PLAYER;
@@ -224,13 +209,13 @@ void lost_live() {
 
 void print_score(const uint8_t y) {
   char tmp[MAX_SCORE_LEN];
-  snprintf(tmp, MAX_SCORE_LEN, "%d", score);
+  snprintf(tmp, MAX_SCORE_LEN, "%d", shootduino.score);
   const uint8_t score_txt_len = 7; // Length of "Score: ".
   const uint8_t score_len = strlen(tmp);
   const uint8_t x = (display.width() - (score_txt_len + score_len) * BASE_FONT_W) / 2;
   pmem_print(x, y, 1, PSTR("Score: "));
   display.setCursor(x + score_txt_len * BASE_FONT_W, y);
-  display.print(score);
+  display.print(shootduino.score);
 }
 
 void game_over() {
@@ -238,7 +223,7 @@ void game_over() {
   draw_stars();
   pmem_print_center(10, 2, PSTR("Game Over"));
   
-  if (lives == 0) {
+  if (shootduino.lives == 0) {
     pmem_print_center(30, 1, PSTR("You have lost"));
     pmem_print_center(40, 1, PSTR("all your lives."));
   } else {
@@ -248,8 +233,8 @@ void game_over() {
   
   print_score(56);
   
-  if (joystick.right_button && (ticks - state_changed > MIN_DELAY)) {
-    if (get_highscore_index(score) != -1) {
+  if (joystick.right_button && (shootduino.ticks - shootduino.state_changed > MIN_DELAY)) {
+    if (get_highscore_index(shootduino.score) != -1) {
       change_state(ENTER_HS);
     } else {
       init_game();
@@ -264,23 +249,23 @@ void update_game() {
     change_state(PAUSED);
     return;
   }
-  if (player_hit) {
-    player_hit = false;
-    if (--lives == 0) {
+  if (shootduino.player_hit) {
+    shootduino.player_hit = false;
+    if (--shootduino.lives == 0) {
       change_state(DONE);
     } else {
       change_state(LOST_LIVE);
     }    
     return;
   }
-  if (asteroids_missed >= MAX_MISSES) {
+  if (shootduino.asteroids_missed >= MAX_MISSES) {
       change_state(DONE);
       return;
   }
   if (joystick.right_button) {
     fire_bullet();
   }
-  if (ticks - asteroid_started > ASTEROID_DELAY) {
+  if (shootduino.ticks - shootduino.asteroid_started > ASTEROID_DELAY) {
     start_asteroid();
   }
   check_collisions();
@@ -301,7 +286,7 @@ void intro() {
   pmem_print_center(35, 1, PSTR("Press right button"));
   pmem_print_center(45, 1, PSTR("to start!"));
 
-  if (ticks - state_changed > 7000) {
+  if (shootduino.ticks - shootduino.state_changed > 7000) {
     change_state(SHOW_HS);
   }
   
@@ -324,7 +309,7 @@ void show_highscores() {
     y += 10;
   }
 
-  if (ticks - state_changed > 7000) {
+  if (shootduino.ticks - shootduino.state_changed > 7000) {
     change_state(INTRO);
   }
 
@@ -352,10 +337,10 @@ void enter_highscore() {
 }
 
 void loop() {
-  ticks = millis();
+  shootduino.ticks = millis();
   update_control();
   display.clearDisplay();
-  switch (state) {
+  switch (shootduino.state) {
     case INTRO:     intro();           break;
     case PAUSED:    pause_game();      break;
     case RUNNING:   update_game();     break;

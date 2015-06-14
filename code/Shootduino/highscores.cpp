@@ -2,14 +2,14 @@
 #include "highscores.h"
 #include "joystick.h"
 #include "textutils.h"
+#include "game.h"
 
 const char initials_letters[] PROGMEM = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,-?!";
 
 extern Adafruit_SSD1306 display;
 extern JoystickState joystick;
 extern HighScoreEntry highscore_entry;
-extern uint32_t ticks;
-extern uint16_t score;
+extern Game shootduino;
 
 uint32_t initials_control_hit = 0;
 uint8_t letter_index[LEN_INITIALS] = { 0 };
@@ -95,8 +95,8 @@ void init_highscore_entry(uint16_t score) {
 }
 
 void handle_highscore_controls() {
-  if (ticks - initials_control_hit >= HS_CONTROL_DELAY) {
-    initials_control_hit = ticks;
+  if (shootduino.ticks - initials_control_hit >= HS_CONTROL_DELAY) {
+    initials_control_hit = shootduino.ticks;
     if (joystick.bottom_button) {
       initials_index++;
       initials_index %= LEN_INITIALS;
@@ -117,7 +117,7 @@ void copy_initials_letters() {
   for (uint8_t i = 0; i < LEN_INITIALS; i++) {
     highscore_entry.initials[i] = pgm_read_byte(initials_letters + letter_index[i]);
   }
-  highscore_entry.score = score;  
+  highscore_entry.score = shootduino.score;  
 }
 
 uint8_t score_entry_xpos() {
