@@ -1,6 +1,19 @@
+#include <Adafruit_SSD1306.h>
 #include "highscores.h"
+#include "joystick.h"
+#include "textutils.h"
 
 const char initials_letters[] PROGMEM = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,-?!";
+
+extern Adafruit_SSD1306 display;
+extern JoystickState joystick;
+extern HighScoreEntry highscore_entry;
+extern uint32_t ticks;
+extern uint16_t score;
+
+uint32_t initials_control_hit = 0;
+uint8_t letter_index[LEN_INITIALS] = { 0 };
+uint8_t initials_index = 0;
 
 void init_highscores() {
   uint16_t address = HIGHSCORE_ADDR;
@@ -57,5 +70,64 @@ int8_t get_highscore_index(uint16_t score) {
     }
   }
   return index;
+}
+
+void show_highscore_entry(uint8_t y, HighScoreEntry entry) {
+  char buf[LEN_HIGHSCORE_ENTRY + 1];
+  for (uint8_t j = 0; j < LEN_INITIALS; j++) {
+    buf[j] = entry.initials[j];
+  }
+  buf[LEN_INITIALS] = ' ';
+  sprintf(buf + 4, "%05d", entry.score);
+  buf[LEN_HIGHSCORE_ENTRY] = 0;
+  display.setCursor(score_entry_xpos(), y);
+  display.print(buf);
+}
+
+void init_highscore_entry(uint16_t score) {
+  highscore_entry.score = score;
+  for (uint8_t i = 0; i < LEN_INITIALS; i++) {
+    highscore_entry.initials[i] = 'A';
+  }
+  for (uint8_t i = 0; i < LEN_INITIALS; i++)
+    letter_index[i] = 0;
+  initials_index = 0;
+}
+
+void handle_highscore_controls() {
+  if (ticks - initials_control_hit >= HS_CONTROL_DELAY) {
+    initials_control_hit = ticks;
+    if (joystick.bottom_button) {
+      initials_index++;
+      initials_index %= LEN_INITIALS;
+    } else if (joystick.up) {
+      letter_index[initials_index]++;
+      if (letter_index[initials_index] >= strlen_P(initials_letters) - 1)
+        letter_index[initials_index] = 0;
+    } else if (joystick.down) {
+      if (letter_index[initials_index] == 0)
+        letter_index[initials_index] = strlen_P(initials_letters) - 1;
+      else
+        letter_index[initials_index]--;
+    }
+  }
+}
+
+void copy_initials_letters() {
+  for (uint8_t i = 0; i < LEN_INITIALS; i++) {
+    highscore_entry.initials[i] = pgm_read_byte(initials_letters + letter_index[i]);
+  }
+  highscore_entry.score = score;  
+}
+
+uint8_t score_entry_xpos() {
+  return (display.width() - LEN_HIGHSCORE_ENTRY * BASE_FONT_W) / 2;
+}
+
+void show_highscore_display() {
+  pmem_print_center(10, 1, PSTR("Enter Initials"));
+  show_highscore_entry(30, highscore_entry);
+  display.setCursor(score_entry_xpos() + initials_index * BASE_FONT_W, 36);
+  display.write(24); // Shows an arrow  
 }
 
