@@ -7,6 +7,7 @@ const uint8_t MAX_LIVES = 3;
 const uint16_t ASTEROID_DELAY = 800;
 const uint16_t BULLET_DELAY = 600;
 const uint16_t MIN_DELAY = 300;
+const uint16_t SHOW_HIGHSCORES_DELAY = 7000;
 const uint8_t MAX_SCORE_LEN = 7;
 
 struct Game {

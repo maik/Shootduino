@@ -273,7 +273,7 @@ void intro() {
   pmem_print_center(35, 1, PSTR("Press right button"));
   pmem_print_center(45, 1, PSTR("to start!"));
 
-  if (shootduino.ticks - shootduino.state_changed > 7000) {
+  if (shootduino.ticks - shootduino.state_changed > SHOW_HIGHSCORES_DELAY) {
     change_state(SHOW_HS);
   }
   
@@ -296,7 +296,7 @@ void show_highscores() {
     y += 10;
   }
 
-  if (shootduino.ticks - shootduino.state_changed > 7000) {
+  if (shootduino.ticks - shootduino.state_changed > SHOW_HIGHSCORES_DELAY) {
     change_state(INTRO);
   }
 
