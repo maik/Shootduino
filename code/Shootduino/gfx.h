@@ -1,5 +1,5 @@
-#ifndef __SHOOTER_GFX__
-#define __SHOOTER_GFX__
+#ifndef __GFX_H_
+#define __GFX_H_
 const uint8_t PLAYER_W = 13;
 const uint8_t PLAYER_H = 13;
 extern const uint8_t spaceship_bmp[];

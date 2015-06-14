@@ -1,5 +1,5 @@
-#ifndef __SHOOTER_JOYSTICK__
-#define __SHOOTER_JOYSTICK__
+#ifndef __JOYSTICK_H_
+#define __JOYSTICK_H_
 #include <Arduino.h>
 
 //#define JOYSTICK_SHIELD

@@ -1,5 +1,5 @@
-#ifndef __HIGHSCORES__
-#define __HIGHSCORES__
+#ifndef __HIGHSCORES_H_
+#define __HIGHSCORES_H_
 #include <EEPROM.h>
 
 extern const char initials_letters[] PROGMEM;
