@@ -340,7 +340,7 @@ void setup() {
 
 void loop() {
   shootduino.ticks = millis();
-  update_control();
+  update_joystick();
   display.clearDisplay();
   switch (shootduino.state) {
     case INTRO:     intro();           break;

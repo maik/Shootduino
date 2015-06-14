@@ -14,7 +14,7 @@ void init_joystick_shield() {
   }
 }
 
-void update_control() {
+void update_joystick() {
   uint16_t x = analogRead(A0);
   uint16_t y = analogRead(A1);
   joystick.left = x < resting_pos_x - 1;

@@ -26,7 +26,7 @@ static uint16_t resting_pos_x;
 static uint16_t resting_pos_y;
 
 void init_joystick_shield();
-void update_control();
+void update_joystick();
 static void init_joystick_shield_button(const uint8_t pin);
 #endif
 
