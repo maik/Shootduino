@@ -2,10 +2,14 @@
 #define __SHOOTER_JOYSTICK__
 #include <Arduino.h>
 
-const uint8_t JOY_BUTTON = 2;
-const uint8_t RIGHT_BUTTON = 3;
+//#define JOYSTICK_SHIELD
+
+#ifdef JOYSTICK_SHIELD
 const uint8_t TOP_BUTTON = 4;
 const uint8_t BOTTOM_BUTTON = 5;
+#endif
+const uint8_t JOY_BUTTON = 2;
+const uint8_t RIGHT_BUTTON = 3;
 const uint8_t LEFT_BUTTON = 6;
 
 struct JoystickState {
@@ -14,8 +18,10 @@ struct JoystickState {
   bool up : 1;
   bool down : 1;
   bool joy_button : 1;
+#ifdef JOYSTICK_SHIELD
   bool top_button : 1;
   bool bottom_button : 1;
+#endif
   bool left_button : 1;
   bool right_button : 1;
 };
