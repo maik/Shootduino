@@ -1,5 +1,4 @@
 #include <Arduino.h>
-#include "game_state.h"
 #include "game.h"
 
 extern Game shootduino;
