@@ -155,17 +155,6 @@ void init_game() {
   init_highscore_entry(0);
 }
 
-void setup() {
-  randomSeed(analogRead(A0));
-  init_joystick_shield();
-  init_highscores();
-  init_game();
-  display.begin(SSD1306_SWITCHCAPVCC, I2C_ADDRESS_DISPLAY);
-  display.display();
-  delay(1000);
-  display.clearDisplay();
-}
-
 void pause_game() {
   move_stars();
   draw_stars();
@@ -333,6 +322,17 @@ void enter_highscore() {
     joystick.right_button = false;
     delay(200);
   }
+}
+
+void setup() {
+  randomSeed(analogRead(A0));
+  init_joystick_shield();
+  init_highscores();
+  init_game();
+  display.begin(SSD1306_SWITCHCAPVCC, I2C_ADDRESS_DISPLAY);
+  display.display();
+  delay(1000);
+  display.clearDisplay();
 }
 
 void loop() {
