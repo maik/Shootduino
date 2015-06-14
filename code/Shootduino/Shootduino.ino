@@ -167,10 +167,10 @@ void pause_game() {
   display.print(shootduino.lives);
   display.setCursor(42, 56);
   display.print(shootduino.score);
-  if (joystick.left_button && (shootduino.ticks - shootduino.state_changed > MIN_DELAY)) {
+  if (joystick.left_button && (shootduino.ticks - shootduino.state_changed > MIN_DELAY_AFTER_STATE_CHANGE)) {
     change_state(RUNNING);
     joystick.left_button = false;
-    delay(200);
+    delay(DEBOUNCE_DELAY);
   }
 }
 
@@ -183,14 +183,14 @@ void lost_live() {
   pmem_print_center(5, 2, PSTR("Don't"));
   pmem_print_center(25, 2, PSTR("Give"));
   pmem_print_center(45, 2, PSTR("Up!"));
-  if (joystick.right_button && (shootduino.ticks - shootduino.state_changed > MIN_DELAY)) {
+  if (joystick.right_button && (shootduino.ticks - shootduino.state_changed > MIN_DELAY_AFTER_STATE_CHANGE)) {
     change_state(RUNNING);
     player.vx = player.vy = 2;
     player.type = PLAYER;
     player.is_active = true;
     player.anim_frame = 0;
     joystick.right_button = false;
-    delay(200);
+    delay(DEBOUNCE_DELAY);
   }
 }
 
@@ -220,14 +220,14 @@ void game_over() {
   
   print_score(56);
   
-  if (joystick.right_button && (shootduino.ticks - shootduino.state_changed > MIN_DELAY)) {
+  if (joystick.right_button && (shootduino.ticks - shootduino.state_changed > MIN_DELAY_AFTER_STATE_CHANGE)) {
     if (get_highscore_index(shootduino.score) != -1) {
       change_state(ENTER_HS);
     } else {
       init_game();
     }
     joystick.right_button = false;
-    delay(200);
+    delay(DEBOUNCE_DELAY);
   }
 }
 
@@ -280,7 +280,7 @@ void intro() {
   if (joystick.right_button) {
     change_state(RUNNING);
     joystick.right_button = false;
-    delay(200);
+    delay(DEBOUNCE_DELAY);
   }
 }
 
@@ -303,7 +303,7 @@ void show_highscores() {
   if (joystick.right_button) {
     change_state(INTRO);
     joystick.right_button = false;
-    delay(200);
+    delay(DEBOUNCE_DELAY);
   }
 }
 
@@ -319,7 +319,7 @@ void enter_highscore() {
     init_game();
     change_state(INTRO);
     joystick.right_button = false;
-    delay(200);
+    delay(DEBOUNCE_DELAY);
   }
 }
 
