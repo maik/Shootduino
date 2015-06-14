@@ -142,13 +142,13 @@ void init_game() {
   init_objects(bullets, MAX_BULLETS);
   init_objects(asteroids, MAX_ASTEROIDS);
   change_state(INTRO);
-  shootduino.player_hit = false;
   player.x = 0;
   player.y = display.height() / 2;
   player.vx = player.vy = 2;
   player.type = PLAYER;
   player.is_active = true;
   player.anim_frame = 0;
+  shootduino.player_hit = false;
   shootduino.lives = MAX_LIVES;
   shootduino.score = 0;
   shootduino.asteroids_missed = 0;
