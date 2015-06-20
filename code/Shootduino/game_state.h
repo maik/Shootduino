@@ -1,6 +1,6 @@
 #ifndef __GAME_STATE_H_
 #define __GAME_STATE_H_
-enum GameState {
+enum GameState : uint8_t {
   INTRO, RUNNING, PAUSED, LOST_LIVE, DONE,
   ENTER_HS, SHOW_HS
 };
