@@ -332,7 +332,7 @@ void init_display() {
 
 void setup() {
   randomSeed(analogRead(A0));
-  init_joystick_shield();
+  init_joystick();
   init_highscores();
   init_game();
   init_display();

@@ -2,7 +2,7 @@
 #define __HIGHSCORES_H_
 #include <EEPROM.h>
 
-extern const char initials_letters[] PROGMEM;
+extern const char INITIALS_LETTERS[] PROGMEM;
 
 const uint16_t HIGHSCORE_ADDR = 0;
 const uint8_t HIGHSCORE_MARKER = 42;

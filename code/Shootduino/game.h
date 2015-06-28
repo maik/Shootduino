@@ -4,6 +4,7 @@
 #include "highscores.h"
 
 const uint8_t MAX_LIVES = 3;
+const uint8_t MAX_MISSES = 5;
 const uint16_t ASTEROID_DELAY = 800;
 const uint16_t BULLET_DELAY = 600;
 const uint16_t MIN_DELAY_AFTER_STATE_CHANGE = 300;

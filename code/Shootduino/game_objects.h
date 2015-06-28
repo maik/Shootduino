@@ -4,7 +4,6 @@
 
 const uint8_t MAX_ASTEROIDS = 8;
 const uint8_t MAX_BULLETS = 3;
-const uint8_t MAX_MISSES = 5;
 
 enum GameObjectType : uint8_t {
   PLAYER, ASTEROID, BULLET, EXPLOSION
