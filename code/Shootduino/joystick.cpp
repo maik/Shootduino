@@ -36,7 +36,6 @@ void update_joystick() {
 }
 
 static void init_joystick_button(const uint8_t pin) {
-  pinMode(pin, INPUT);
-  digitalWrite(pin, HIGH);
+  pinMode(pin, INPUT_PULLUP);
 }
 
